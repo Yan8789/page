@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>WINTER</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #loginContainer {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .login-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .robot-name-input {
+            width: 80%;
+            max-width: 300px;
+            padding: 12px;
+            margin: 20px auto;
+            border: 2px solid #ffc0cb;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            display: block;
+        }
+        .robot-name-input:focus {
+            outline: none;
+            border-color: #ffb8c6;
+            box-shadow: 0 0 5px rgba(76,175,80,0.3);
+        }
+        .login-button {
+            background-color: #ffc0cb;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+        .login-button:hover {
+            background-color: #ffb8c6;
+        }
+        .login-error {
+            color: #f44336;
+            margin-top: 10px;
+            display: none;
+        }
+        #chatContainer {
+            display: none;
+        }
+        .bot-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .bot-header img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .bot-header-info h2 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .chat-container {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #fafafa;
+        }
+        .message-wrapper {
+            display: flex;
+            margin: 8px 0;
+            width: 100%;
+            align-items: flex-end;
+        }
+        .bot-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        .message {
+            padding: 8px 12px;
+            border-radius: 15px;
+            display: inline-block;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .user-message-wrapper {
+            justify-content: flex-end;
+        }
+        .bot-message-wrapper {
+            justify-content: flex-start;
+        }
+        .user-message {
+            background-color: #ffd3dc;
+            border-bottom-right-radius: 5px;
+        }
+        .bot-message {
+            background-color: #fffff9;
+            border-bottom-left-radius: 5px;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #ffc0cb;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+        button:hover {
+            background-color: #ffb8c6;
+        }
+        .wave-container {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 20px;
+            padding: 0 10px;
+        }
+        .wave {
+            width: 2.5px;
+            height: 5px;
+            background-color: #F0E68C;
+            border-radius: 3px;
+        }
+        .wave.playing {
+            animation: wave 1s ease-in-out infinite;
+        }
+        .wave.playing:nth-child(2) { animation-delay: 0.1s; }
+        .wave.playing:nth-child(3) { animation-delay: 0.2s; }
+        .wave.playing:nth-child(4) { animation-delay: 0.3s; }
+        .wave.playing:nth-child(5) { animation-delay: 0.4s; }
+        @keyframes wave {
+            0%, 100% { height: 8px; }
+            50% { height: 20px; }
+        }
+        .bot-audio-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 12px;
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            border-bottom-left-radius: 5px;
+        }
+        .play-icon {
+            width: 24px;
+            height: 24px;
+            background-color: #ffb8c6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登入介面 -->
+        <div id="loginContainer">
+            <img src="./public/picture/3.jpg" alt="Robot Avatar" class="login-avatar">
+            <input type="text" id="robotName" class="robot-name-input" placeholder="你要叫我什麼 ♡" maxlength="20">
+            <div id="loginError" class="login-error">給我一個名字！</div>
+            <button onclick="handleLogin()" class="login-button">開始對話</button>
+        </div>
+
+        <!-- 聊天介面 -->
+        <div id="chatContainer">
+            <div class="bot-header">
+                <img src="./public/picture/3.jpg" alt="Bot Avatar">
+                <div class="bot-header-info">
+                    <h2 id="botName">robot</h2>
+                    <div>在你心裡💘</div>
+                </div>
+            </div>
+            
+            <div class="chat-container" id="chatArea"></div>
+            
+            <div class="input-container">
+                <input type="text" id="userInput" placeholder="請輸入訊息..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">送出</button>
+            </div>
+        </div>
+        
+        <!-- 音效檔案 -->
+        <audio id="welcome" src="./public/wintervoice/冬time.mp3" type="audio/mpeg"></audio>
+        <audio id="8" src="./public/wintervoice/八百標兵_1.mp3" type="audio/mpeg"></audio>
+        <audio id="j_love1" src="./public/wintervoice/大宜絲改他又.mp3" type="audio/mpeg"></audio>
+        <audio id="dog" src="./public/wintervoice/小狗.mp3" type="audio/mpeg"></audio>
+        <audio id="slb" src="./public/wintervoice/小籠包.mp3" type="audio/mpeg"></audio>
+        <audio id="slbg" src="./public/wintervoice/小籠包好吃.mp3" type="audio/mpeg"></audio>
+        <audio id="no1" src="./public/wintervoice/不•.mp3" type="audio/mpeg"></audio>
+        <audio id="dontknow1" src="./public/wintervoice/不知道.mp3" type="audio/mpeg"></audio>
+        <audio id="dontknow2" src="./public/wintervoice/不知道2.mp3" type="audio/mpeg"></audio>
+        <audio id="no2" src="./public/wintervoice/不要--.mp3" type="audio/mpeg"></audio>
+        <audio id="no3" src="./public/wintervoice/不要.mp3" type="audio/mpeg"></audio>
+        <audio id="noeat" src="./public/wintervoice/不要吃兔.mp3" type="audio/mpeg"></audio>
+        <audio id="nofool" src="./public/wintervoice/不笨蛋.mp3" type="audio/mpeg"></audio>
+        <audio id="f_s" src="./public/wintervoice/加油特種兵.mp3" type="audio/mpeg"></audio>
+        <audio id="cute" src="./public/wintervoice/可愛.mp3" type="audio/mpeg"></audio>
+        <audio id="eat1" src="./public/wintervoice/吃糖葫蘆.mp3" type="audio/mpeg"></audio>
+        <audio id="w" src="./public/wintervoice/西瓜.mp3" type="audio/mpeg"></audio>
+        <audio id="y_cute" src="./public/wintervoice/你是可愛.mp3" type="audio/mpeg"></audio>
+        <audio id="run" src="./public/wintervoice/快跑.mp3" type="audio/mpeg"></audio>
+        <audio id="imw" src="./public/wintervoice/我是金冬天_.mp3" type="audio/mpeg"></audio>
+        <audio id="c_love1" src="./public/wintervoice/我愛尼.mp3" type="audio/mpeg"></audio>
+        <audio id="c_love2" src="./public/wintervoice/我愛你.mp3" type="audio/mpeg"></audio>
+        <audio id="m" src="./public/wintervoice/芒果.mp3" type="audio/mpeg"></audio>
+        <audio id="r" src="./public/wintervoice/兔子.mp3" type="audio/mpeg"></audio>
+        <audio id="j_love2" src="./public/wintervoice/阿宜系得人.mp3" type="audio/mpeg"></audio>
+        <audio id="rain" src="./public/wintervoice/雨.mp3" type="audio/mpeg"></audio>
+        <audio id="brave" src="./public/wintervoice/勇敢冬冬不怕困難.mp3" type="audio/mpeg"></audio>
+        <audio id="h" src="./public/wintervoice/哈密瓜.mp3" type="audio/mpeg"></audio>
+        <audio id="hn" src="./public/wintervoice/哼.mp3" type="audio/mpeg"></audio>
+        <audio id="hnhnhn" src="./public/wintervoice/哼哼哼.mp3" type="audio/mpeg"></audio>
+        <audio id="p" src="./public/wintervoice/桃子.mp3" type="audio/mpeg"></audio>
+        <audio id="wo" src="./public/wintervoice/烏薩期.mp3" type="audio/mpeg"></audio>
+        <audio id="noddle" src="./public/wintervoice/烤冷面.mp3" type="audio/mpeg"></audio>
+        <audio id="strb" src="./public/wintervoice/草莓.mp3" type="audio/mpeg"></audio>
+        <audio id="help" src="./public/wintervoice/救我.mp3" type="audio/mpeg"></audio>
+        <audio id="fool" src="./public/wintervoice/笨蛋.mp3" type="audio/mpeg"></audio>
+        <audio id="fooldog" src="./public/wintervoice/笨蛋小狗汪汪.mp3" type="audio/mpeg"></audio>
+        <audio id="fool3" src="./public/wintervoice/笨蛋笨蛋笨蛋.mp3" type="audio/mpeg"></audio>
+        <audio id="meat" src="./public/wintervoice/郭包肉.mp3" type="audio/mpeg"></audio>
+        <audio id="oh" src="./public/wintervoice/喔.mp3" type="audio/mpeg"></audio>
+        <audio id="nn" src="./public/wintervoice/嗯.mp3" type="audio/mpeg"></audio>
+        <audio id="sorry" src="./public/wintervoice/對不起.mp3" type="audio/mpeg"></audio>
+        <audio id="p_winter" src="./public/wintervoice/漂亮冬天_1.mp3" type="audio/mpeg"></audio>
+        <audio id="thl" src="./public/wintervoice/糖葫蘆.mp3" type="audio/mpeg"></audio>
+        <audio id="kiss" src="./public/wintervoice/親_.mp3" type="audio/mpeg"></audio>
+        <audio id="j_love3" src="./public/wintervoice/戴斯奇.mp3" type="audio/mpeg"></audio>
+        <audio id="thank" src="./public/wintervoice/謝謝妳.mp3" type="audio/mpeg"></audio>
+        <audio id="k_love" src="./public/wintervoice/薩狼嘿.mp3" type="audio/mpeg"></audio>
+        <audio id="apple" src="./public/wintervoice/蘋果.mp3" type="audio/mpeg"></audio>
+        <audio id="fighting" src="./public/wintervoice/fighting.mp3" type="audio/mpeg"></audio>
+        <audio id="love" src="./public/wintervoice/I love you.mp3" type="audio/mpeg"></audio>
+        <audio id="song" src="./public/wintervoice/song_w.mp3" type="audio/mpeg"></audio>
+
+
+
+
+        
+        <!-- 音效檔案 -->
+    </div>
+
+    <script>
+        function handleLogin() {
+            const robotName = document.getElementById('robotName').value.trim();
+            const loginError = document.getElementById('loginError');
+            
+            if (robotName === '') {
+                loginError.style.display = 'block';
+                return;
+            }
+            
+            loginError.style.display = 'none';
+            
+            // 儲存機器人名字
+            document.getElementById('botName').textContent = robotName;
+            
+            const welcomeSound = document.getElementById('welcome');
+            welcomeSound.play()
+                .then(() => {
+                    // 等待音效播放完畢後切換介面
+                    welcomeSound.onended = () => {
+                        document.getElementById('loginContainer').style.display = 'none';
+                        document.getElementById('chatContainer').style.display = 'block';
+                    };
+                })
+                .catch(e => {
+                    console.log('歡迎音效播放失敗：', e.message);
+                    // 即使音效播放失敗也切換介面
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('chatContainer').style.display = 'block';
+                });
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                if (event.target.id === 'robotName') {
+                    handleLogin();
+                } else if (event.target.id === 'userInput') {
+                    sendMessage();
+                }
+            }
+        }
+
+        function createWaveAnimation(messageId) {
+            const waveContainer = document.createElement('div');
+            waveContainer.className = 'wave-container';
+            for (let i = 0; i < 5; i++) {
+                const wave = document.createElement('div');
+                wave.className = 'wave';
+                waveContainer.appendChild(wave);
+            }
+            return waveContainer;
+        }
+
+        function generateMessageId() {
+            return 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function addMessage(text, isUser, soundId = null, autoPlay = false) {
+            const chatArea = document.getElementById('chatArea');
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.className = `message-wrapper ${isUser ? 'user-message-wrapper' : 'bot-message-wrapper'}`;
+            
+            if (isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message user-message';
+                messageDiv.textContent = text;
+                wrapperDiv.appendChild(messageDiv);
+            } else {
+                const botAvatar = document.createElement('img');
+                botAvatar.src = "./public/picture/3.jpg";
+                botAvatar.alt = "Bot Avatar";
+                botAvatar.className = "bot-avatar";
+                wrapperDiv.appendChild(botAvatar);
+
+                if (soundId) {
+                    const messageId = generateMessageId();
+                    const audioMessage = document.createElement('div');
+                    audioMessage.className = 'bot-audio-message';
+                    audioMessage.id = messageId;
+                    
+                    const playIcon = document.createElement('div');
+                    playIcon.className = 'play-icon';
+                    playIcon.innerHTML = ' ▶';
+                    audioMessage.appendChild(playIcon);
+                    
+                    const waveContainer = createWaveAnimation(messageId);
+                    audioMessage.appendChild(waveContainer);
+                    
+                    audioMessage.onclick = () => playSound(soundId, messageId);
+                    wrapperDiv.appendChild(audioMessage);
+
+                    if (autoPlay) {
+                        setTimeout(() => {
+                            playSound(soundId, messageId);
+                        }, 100);
+                    }
+                }
+            }
+            
+            chatArea.appendChild(wrapperDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function handleMessage(text) {
+            const userInput = text.toLowerCase();
+            let hasResponse = false;
+
+            // 身份相關回應
+            if ( userInput.includes('你是誰')) {
+                const randomwho = Math.random() < 0.5 ? 'imw':'p_winter';
+                addMessage('', false, randomwho, true);
+                return;
+            }
+
+            // 愛與喜歡相關回應
+            if (userInput.includes('我愛你') || userInput.includes('喜歡你')|| userInput.includes('喜歡我')|| userInput.includes('愛我嗎')) {
+                const randomlove = Math.random() < 0.5 ? 'c_love1':'c_love2';
+                addMessage('', false, randomlove, true);
+                return;
+            }
+            if (userInput.includes('愛我')&&userInput.includes('英文')|| userInput.includes('英文')) {
+                addMessage('', false, 'love', true);
+                return;
+            }
+            if (userInput.includes('愛我')&&userInput.includes('日文')|| userInput.includes('日文')) {
+                const jloveResponses = ['j_love1','j_love2','j_love3'];
+                const randomjlove = jloveResponses[Math.floor(Math.random() * jloveResponses.length)];
+                addMessage('', false, randomjlove, true);
+                return;
+            }
+
+            if (userInput.includes('愛我')&&userInput.includes('韓文')|| userInput.includes('韓文')) {
+                addMessage('', false, 'k_love', true);
+                return;
+            }
+
+            // 食物相關回應
+            if (userInput.includes('小籠包')) {
+                if (userInput.includes('好吃')) {
+                    addMessage('', false, 'slbg', true);
+                } else {
+                    addMessage('', false, 'slb', true);
+                }
+                return;
+            }
+            
+
+            if (userInput.includes('食物')|| userInput.includes('東西')) {
+                const foodResponses = ['w','m','h','p','strb','apple','slbg','slb','eat1','noddle','strb','meat','thl'];
+                const randomfood = foodResponses[Math.floor(Math.random() * foodResponses.length)];
+                addMessage('', false, randomfood, true);
+                return;
+            }
+
+            if (userInput.includes('笨蛋')|| userInput.includes('聰明')|| userInput.includes('笨笨')) {
+                const noResponses = ['nofool', 'fool', 'fooldog', 'fool3'];
+                const randomNo = noResponses[Math.floor(Math.random() * noResponses.length)];
+                addMessage('', false, randomNo, true);
+                return;
+            }
+
+
+
+            const ress = {
+                '小狗': 'dog',
+                '不要吃兔兔': 'noeat',
+                '你是笨蛋': 'nofool',
+                '兔子': 'r',
+                '下雨了': 'rain',
+                '勇敢冬冬不怕困難': 'brave',
+                '哈密瓜': 'h',
+                '桃子': 'p',
+                '吃糖葫蘆': 'eat1',
+                '西瓜': 'w',
+                '烏薩奇': 'wo',
+                '烤冷面': 'noddle',
+                '芒果': 'm',
+                '草莓': 'strb',
+                '笨蛋小狗汪汪': 'fooldog',
+                '笨蛋笨蛋笨蛋': 'fool3',
+                '鍋包肉': 'meat',
+                '糖葫蘆': 'thl',
+                '蘋果': 'apple',
+            };
+
+            for (const [res, resId] of Object.entries(ress)) {
+                if (userInput.includes(res)) {
+                    addMessage('', false,resId, true);
+                    hasResponse = true;
+                    break;
+                }
+            }
+            if (hasResponse) return;
+            // 水果相關回應
+            if (userInput.includes('水果')|| userInput.includes('東西')) {
+                const noResponses = ['w','m','h','p','strb', 'apple'];
+                const randomfruit = noResponses[Math.floor(Math.random() * noResponses.length)];
+                addMessage('', false, randomfruit, true);
+                return;
+            }
+
+            // 情緒與狀態相關回應
+            if (userInput.includes('可愛')) {
+                if (userInput.includes('我')) {
+                addMessage('', false, 'y_cute', true);
+                } else {
+                addMessage('', false, 'cute', true);
+                }
+                return;
+            }
+
+            if (userInput.includes('當兵')) {
+                addMessage('', false, 'f_s', true);
+                return;
+            }
+            if (userInput.includes('加油')|| userInput.includes('幫我')) {
+                addMessage('', false, 'fighting', true);
+                return;
+            }
+            
+
+            // 基本互動回應
+            if (userInput.includes('謝謝')) {
+                addMessage('', false, 'thank', true);
+                return;
+            }
+            if (userInput.includes('道歉') || userInput.includes('對不起')|| userInput.includes('你為什麼')) {
+                addMessage('', false, 'sorry', true);
+                return;
+            }
+            if (userInput.includes('知道')|| userInput.includes('為什麼')) {
+                const randomResponse = Math.random() < 0.5 ? 'dontknow1' : 'dontknow2';
+                addMessage('', false, randomResponse, true);
+                return;
+            }
+            if (userInput.includes('不要')|| userInput.includes('再')|| userInput.includes('要')) {
+                const noResponses = ['no1', 'no2', 'no3'];
+                const randomNo = noResponses[Math.floor(Math.random() * noResponses.length)];
+                addMessage('', false, randomNo, true);
+                return;
+            }
+
+            // 有趣的互動
+            if (userInput.includes('親我')|| userInput.includes('親親')) {
+                addMessage('', false, 'kiss', true);
+                return;
+            }
+            if (userInput.includes('順口溜') ) {
+                addMessage('', false, '8', true);
+                return;
+            }
+
+            if (userInput.includes('怕嗎') ) {
+                addMessage('', false, 'brave', true);
+                return;
+            }
+
+            if (userInput.includes('才藝') ) {
+                const talResponses = ['8', 'eat1', 'song'];
+                const randomtal = talResponses[Math.floor(Math.random() * defaultResponses.length)];
+                addMessage('', false, randomtal, true);
+                return;
+            }
+
+
+            // 緊急與幫助
+            if (userInput.includes('救我') || userInput.includes('救')) {
+                const ruResponse = Math.random() < 0.5 ? 'help' : 'run';
+                addMessage('', false, ruResponse, true);
+                return;
+            }
+
+            // 預設回應
+            setTimeout(() => {
+                const defaultResponses = ['hn', 'nn', 'oh','hnhnhn','rain','no1'];
+                const randomDefault = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+                addMessage('', false, randomDefault, true);
+            }, 500);
+        }
+
+        // 修改原本的 sendMessage 函數
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            
+            if (text === '') return;
+            
+            addMessage(text, true);
+            handleMessage(text);
+            
+            input.value = '';
+        }
+
+        function setWaveAnimation(messageId, playing) {
+            const message = document.getElementById(messageId);
+            if (message) {
+                const waves = message.getElementsByClassName('wave');
+                for (let wave of waves) {
+                    if (playing) {
+                        wave.classList.add('playing');
+                    } else {
+                        wave.classList.remove('playing');
+                    }
+                }
+            }
+        }
+
+        function playSound(soundId, messageId) {
+            const sound = document.getElementById(soundId);
+            sound.currentTime = 0;
+            
+            setWaveAnimation(messageId, true);
+            
+            sound.play()
+                .then(() => {
+                    sound.onended = () => {
+                        setWaveAnimation(messageId, false);
+                    };
+                })
+                .catch(e => {
+                    console.log('音效播放失敗：', e.message);
+                    setWaveAnimation(messageId, false);
+                });
+
+            sound.onpause = () => {
+                setWaveAnimation(messageId, false);
+            };
+        }
+
+        
+        document.getElementById('robotName').addEventListener('keypress', handleKeyPress);
+    </script>
+</body>
+</html>
