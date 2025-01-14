@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <title>WINTER</title>
     <style>
@@ -200,7 +201,7 @@
     <div class="container">
         <!-- 登入介面 -->
         <div id="loginContainer">
-            <img src="./public/picture/2.png" alt="Robot Avatar" class="login-avatar">
+            <img src="./public/picture/2.jpg" alt="Robot Avatar" class="login-avatar">
             <input type="text" id="robotName" class="robot-name-input" placeholder="你要叫我什麼 ♡" maxlength="20">
             <div id="loginError" class="login-error">給我一個名字！</div>
             <button onclick="handleLogin()" class="login-button">開始對話</button>
@@ -209,7 +210,7 @@
         <!-- 聊天介面 -->
         <div id="chatContainer">
             <div class="bot-header">
-                <img src="./public/picture/2.png" alt="Bot Avatar">
+                <img src="./public/picture/2.jpg" alt="Bot Avatar">
                 <div class="bot-header-info">
                     <h2 id="botName">robot</h2>
                     <div>在你心裡💘</div>
@@ -343,54 +344,81 @@
         }
 
         function addMessage(text, isUser, soundId = null, autoPlay = false) {
-            const chatArea = document.getElementById('chatArea');
-            const wrapperDiv = document.createElement('div');
-            wrapperDiv.className = `message-wrapper ${isUser ? 'user-message-wrapper' : 'bot-message-wrapper'}`;
-            
-            if (isUser) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message user-message';
-                messageDiv.textContent = text;
-                wrapperDiv.appendChild(messageDiv);
-            } else {
-                const botAvatar = document.createElement('img');
-                botAvatar.src = "./public/picture/2.png";
-                botAvatar.alt = "Bot Avatar";
-                botAvatar.className = "bot-avatar";
-                wrapperDiv.appendChild(botAvatar);
+        const chatArea = document.getElementById('chatArea');
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.className = `message-wrapper ${isUser ? 'user-message-wrapper' : 'bot-message-wrapper'}`;
+        
+        if (isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.textContent = text;
+            wrapperDiv.appendChild(messageDiv);
+        } else {
+            const botAvatar = document.createElement('img');
+            botAvatar.src = "./public/picture/2.jpg";
+            botAvatar.alt = "Bot Avatar";
+            botAvatar.className = "bot-avatar";
+            wrapperDiv.appendChild(botAvatar);
 
-                if (soundId) {
-                    const messageId = generateMessageId();
-                    const audioMessage = document.createElement('div');
-                    audioMessage.className = 'bot-audio-message';
-                    audioMessage.id = messageId;
-                    
-                    const playIcon = document.createElement('div');
-                    playIcon.className = 'play-icon';
-                    playIcon.innerHTML = ' ▶';
-                    audioMessage.appendChild(playIcon);
-                    
-                    const waveContainer = createWaveAnimation(messageId);
-                    audioMessage.appendChild(waveContainer);
-                    
-                    audioMessage.onclick = () => playSound(soundId, messageId);
-                    wrapperDiv.appendChild(audioMessage);
+            if (soundId) {
+                const messageId = generateMessageId();
+                const audioMessage = document.createElement('div');
+                audioMessage.className = 'bot-audio-message';
+                audioMessage.id = messageId;
+                
+                const playIcon = document.createElement('div');
+                playIcon.className = 'play-icon';
+                playIcon.innerHTML = ' ▶';
+                audioMessage.appendChild(playIcon);
+                
+                const waveContainer = createWaveAnimation(messageId);
+                audioMessage.appendChild(waveContainer);
+                
+                audioMessage.onclick = () => playSound(soundId, messageId);
+                wrapperDiv.appendChild(audioMessage);
 
-                    if (autoPlay) {
-                        setTimeout(() => {
-                            playSound(soundId, messageId);
-                        }, 100);
-                    }
+                if (autoPlay) {
+                    setTimeout(() => {
+                        playSound(soundId, messageId);
+                    }, 100);
                 }
+            } else {
+                // 處理圖片或一般文字訊息
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot-message';
+                
+                // 如果訊息包含 <img> 標籤，使用 innerHTML
+                if (text.includes('<img')) {
+                    messageDiv.innerHTML = text;
+                } else {
+                    messageDiv.textContent = text;
+                }
+                wrapperDiv.appendChild(messageDiv);
             }
-            
-            chatArea.appendChild(wrapperDiv);
-            chatArea.scrollTop = chatArea.scrollHeight;
         }
+        
+        chatArea.appendChild(wrapperDiv);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
 
         function handleMessage(text) {
             const userInput = text.toLowerCase();
             let hasResponse = false;
+
+            if (userInput.includes('照片')) {
+                const photos = [
+                    '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg',
+                    '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg',     
+                    '11.jpg', '12.jpg', '13.jpg', '14.jpg'
+                ];
+                const randomPhoto = photos[Math.floor(Math.random() * photos.length)];
+                
+                // 可以先用 console.log 測試路徑是否正確
+                console.log(`Loading photo: ./public/picture/${randomPhoto}`);
+                
+                addMessage(`<img src="./public/picture/${randomPhoto}" alt="random photo" style="max-width: 300px;">`, false);
+                return;
+            }
 
             // 身份相關回應
             if ( userInput.includes('你是誰')||userInput.includes('你叫什麼')) {
@@ -538,7 +566,7 @@
             }
 
             // 有趣的互動
-            if (userInput.includes('親我')|| userInput.includes('親親')) {
+            if (userInput.includes('親我')|| userInput.includes('親親')|| userInput.includes('親一個')) {
                 addMessage('', false, 'kiss', true);
                 return;
             }

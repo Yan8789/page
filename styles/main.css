@@ -1,0 +1,132 @@
+/* 新增響應式基礎設定 */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* 修改現有的 body 樣式 */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+/* 修改 container 樣式 */
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin: 0 auto;
+}
+
+/* 調整聊天容器結構 */
+#chatContainer {
+    display: none;
+    height: 100vh;
+    flex-direction: column;
+}
+
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 70px; /* 為固定的輸入框留空間 */
+}
+
+/* 調整圖片樣式 */
+.message img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    display: block;
+}
+
+/* 手機版響應式設計 */
+@media screen and (max-width: 768px) {
+    body {
+        margin: 0;
+        padding: 10px;
+    }
+
+    .container {
+        padding: 10px;
+        margin: 0;
+    }
+
+    .login-avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .bot-header img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .chat-container {
+        height: calc(100vh - 180px);
+        border: none;
+    }
+
+    .message {
+        max-width: 85%;
+    }
+
+    .input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 10px;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+
+    .bot-avatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    input {
+        font-size: 16px;
+        padding: 8px;
+    }
+
+    button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+/* 更小螢幕的額外調整 */
+@media screen and (max-width: 480px) {
+    .container {
+        box-shadow: none;
+    }
+
+    .chat-container {
+        padding: 5px;
+    }
+
+    .message {
+        max-width: 90%;
+        padding: 6px 10px;
+    }
+
+    .login-button {
+        padding: 12px 30px;
+        font-size: 16px;
+    }
+}
+
+/* iPhone 特定調整 */
+@supports (-webkit-touch-callout: none) {
+    .chat-container {
+        padding-bottom: 80px;
+    }
+}
