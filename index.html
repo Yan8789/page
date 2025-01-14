@@ -200,7 +200,7 @@
     <div class="container">
         <!-- 登入介面 -->
         <div id="loginContainer">
-            <img src="./public/picture/3.jpg" alt="Robot Avatar" class="login-avatar">
+            <img src="./public/picture/2.png" alt="Robot Avatar" class="login-avatar">
             <input type="text" id="robotName" class="robot-name-input" placeholder="你要叫我什麼 ♡" maxlength="20">
             <div id="loginError" class="login-error">給我一個名字！</div>
             <button onclick="handleLogin()" class="login-button">開始對話</button>
@@ -209,7 +209,7 @@
         <!-- 聊天介面 -->
         <div id="chatContainer">
             <div class="bot-header">
-                <img src="./public/picture/3.jpg" alt="Bot Avatar">
+                <img src="./public/picture/2.png" alt="Bot Avatar">
                 <div class="bot-header-info">
                     <h2 id="botName">robot</h2>
                     <div>在你心裡💘</div>
@@ -354,7 +354,7 @@
                 wrapperDiv.appendChild(messageDiv);
             } else {
                 const botAvatar = document.createElement('img');
-                botAvatar.src = "./public/picture/3.jpg";
+                botAvatar.src = "./public/picture/2.png";
                 botAvatar.alt = "Bot Avatar";
                 botAvatar.className = "bot-avatar";
                 wrapperDiv.appendChild(botAvatar);
@@ -393,7 +393,7 @@
             let hasResponse = false;
 
             // 身份相關回應
-            if ( userInput.includes('你是誰')) {
+            if ( userInput.includes('你是誰')||userInput.includes('你叫什麼')) {
                 const randomwho = Math.random() < 0.5 ? 'imw':'p_winter';
                 addMessage('', false, randomwho, true);
                 return;
@@ -500,6 +500,11 @@
                 addMessage('', false, 'f_s', true);
                 return;
             }
+
+            if (userInput.includes('唱')||userInput.includes('歌')) {
+                addMessage('', false, 'song', true);
+                return;
+            }
             if (userInput.includes('加油')|| userInput.includes('幫我')) {
                 addMessage('', false, 'fighting', true);
                 return;
@@ -532,7 +537,7 @@
                 addMessage('', false, 'kiss', true);
                 return;
             }
-            if (userInput.includes('順口溜') ) {
+            if (userInput.includes('繞口令') ) {
                 addMessage('', false, '8', true);
                 return;
             }
