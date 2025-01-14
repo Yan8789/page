@@ -400,7 +400,7 @@
             }
 
             // 愛與喜歡相關回應
-            if (userInput.includes('我愛你') || userInput.includes('喜歡你')|| userInput.includes('喜歡我')|| userInput.includes('愛我嗎')) {
+            if (userInput.includes('我愛你') || userInput.includes('喜歡你')|| userInput.includes('喜歡我')|| userInput.includes('愛我嗎')|| userInput.includes('我想你')) {
                 const randomlove = Math.random() < 0.5 ? 'c_love1':'c_love2';
                 addMessage('', false, randomlove, true);
                 return;
@@ -436,6 +436,11 @@
                 const foodResponses = ['w','m','h','p','strb','apple','slbg','slb','eat1','noddle','strb','meat','thl'];
                 const randomfood = foodResponses[Math.floor(Math.random() * foodResponses.length)];
                 addMessage('', false, randomfood, true);
+                return;
+            }
+
+            if (userInput.includes('你是笨蛋')|| userInput.includes('你笨笨')) {
+                addMessage('', false, 'nofool', true);
                 return;
             }
 
