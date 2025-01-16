@@ -202,7 +202,7 @@
     <div class="container">
         <!-- 登入介面 -->
         <div id="loginContainer">
-            <img src="./public/picture/2.jpg" alt="Robot Avatar" class="login-avatar">
+            <img src="./public/picture/winter/2.jpg" alt="Robot Avatar" class="login-avatar">
             <input type="text" id="robotName" class="robot-name-input" placeholder="你要叫我什麼 ♡" maxlength="20">
             <div id="loginError" class="login-error">給我一個名字！</div>
             <button onclick="handleLogin()" class="login-button">開始對話</button>
@@ -211,7 +211,7 @@
         <!-- 聊天介面 -->
         <div id="chatContainer">
             <div class="bot-header">
-                <img src="./public/picture/2.jpg" alt="Bot Avatar">
+                <img src="./public/picture/winter/2.jpg" alt="Bot Avatar">
                 <div class="bot-header-info">
                     <h2 id="botName">東東</h2>
                     <div>在你心裡💘</div>
@@ -356,7 +356,7 @@
             wrapperDiv.appendChild(messageDiv);
         } else {
             const botAvatar = document.createElement('img');
-            botAvatar.src = "./public/picture/2.jpg";
+            botAvatar.src = "./public/picture/winter/2.jpg";
             botAvatar.alt = "Bot Avatar";
             botAvatar.className = "bot-avatar";
             wrapperDiv.appendChild(botAvatar);
@@ -406,7 +406,7 @@
             const userInput = text.toLowerCase();
             let hasResponse = false;
 
-            if (userInput.includes('照片')) {
+            if (userInput.includes('你的照片')) {
                 const photos = [
                     '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg',
                     '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg',     
@@ -415,9 +415,23 @@
                 const randomPhoto = photos[Math.floor(Math.random() * photos.length)];
                 
                 // 可以先用 console.log 測試路徑是否正確
-                console.log(`Loading photo: ./public/picture/${randomPhoto}`);
+                console.log(`Loading photo: ./public/picture/winter/${randomPhoto}`);
                 
-                addMessage(`<img src="./public/picture/${randomPhoto}" alt="random photo" style="max-width: 300px;">`, false);
+                addMessage(`<img src="./public/picture/winter/${randomPhoto}" alt="random photo" style="max-width: 300px;">`, false);
+                return;
+            }
+
+            if (userInput.includes('hanni')) {
+                const photos2 = [
+                    '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg',
+                    '6.jpg', '7.jpg', '8.jpg'
+                ];
+                const randomPhoto2 = photos2[Math.floor(Math.random() * photos2.length)];
+                
+                // 可以先用 console.log 測試路徑是否正確
+                console.log(`Loading photo: ./public/picture/hanni/${randomPhoto2}`);
+                
+                addMessage(`<img src="./public/picture/hanni/${randomPhoto2}" alt="random photo" style="max-width: 300px;">`, false);
                 return;
             }
 
@@ -561,8 +575,8 @@
             }
             if (userInput.includes('不要')|| userInput.includes('再')|| userInput.includes('要')) {
                 const noResponses = ['no1', 'no2', 'no3'];
-                const randomNo = noResponses[Math.floor(Math.random() * noResponses.length)];
-                addMessage('', false, randomNo, true);
+                const randomNon = nonResponses[Math.floor(Math.random() * nonResponses.length)];
+                addMessage('', false, randomNon, true);
                 return;
             }
 
@@ -583,7 +597,7 @@
 
             if (userInput.includes('才藝') ) {
                 const talResponses = ['8', 'eat1', 'song'];
-                const randomtal = talResponses[Math.floor(Math.random() * defaultResponses.length)];
+                const randomtal = talResponses[Math.floor(Math.random() * talResponses.length)];
                 addMessage('', false, randomtal, true);
                 return;
             }
